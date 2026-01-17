@@ -106,32 +106,35 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl h-96 flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-[60vw] h-[75vh] flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex items-center justify-between rounded-t-lg">
+        <div className="bg-gradient-to-r from-green-500 via-green-600 to-teal-600 px-8 py-5 flex items-center justify-between rounded-t-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="bg-white rounded-full p-2">
-              <MessageCircle className="text-green-600" size={20} />
+            <div className="bg-white rounded-full p-2 shadow-md">
+              <MessageCircle className="text-green-600" size={28} />
             </div>
-            <h2 className="text-xl font-bold text-white">GenAI Stack Chat</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-white">GenAI Stack Chat</h2>
+              <p className="text-green-100 text-xs">Your AI Assistant</p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:bg-green-700 p-1 rounded transition"
+            className="text-white hover:bg-green-700 p-2 rounded-full transition hover:scale-110"
           >
-            <X size={24} />
+            <X size={28} />
           </button>
         </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50 space-y-4">
+        <div className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-gray-50 to-white space-y-6">
           {messages.map((msg, idx) => {
             if (msg.isTitle) {
               return (
-                <div key={idx} className="flex items-center justify-center py-4">
-                  <div className="bg-white rounded-full p-3 shadow-md">
-                    <MessageCircle className="text-green-600" size={32} />
+                <div key={idx} className="flex items-center justify-center py-6">
+                  <div className="bg-white rounded-full p-4 shadow-lg">
+                    <MessageCircle className="text-green-600" size={40} />
                   </div>
                 </div>
               );
@@ -139,8 +142,8 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
 
             if (msg.isSubtitle) {
               return (
-                <div key={idx} className="flex items-center justify-center py-2">
-                  <p className="text-gray-500 text-sm">{msg.content}</p>
+                <div key={idx} className="flex items-center justify-center py-4">
+                  <p className="text-gray-700 text-lg font-medium">{msg.content}</p>
                 </div>
               );
             }
@@ -149,15 +152,18 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
             return (
               <div
                 key={idx}
-                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+                className="flex gap-3 justify-start"
               >
+                <div className="text-3xl pt-1 flex-shrink-0">
+                  {isUser ? '👤' : '🤖'}
+                </div>
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg text-sm leading-relaxed ${
+                  className={`max-w-2xl px-6 py-4 rounded-2xl text-base leading-relaxed font-medium shadow-md ${
                     isUser
-                      ? 'bg-green-600 text-white rounded-br-none'
+                      ? 'bg-gradient-to-br from-green-300 to-green-400 text-gray-900'
                       : msg.isError
-                      ? 'bg-red-100 text-red-900 rounded-bl-none'
-                      : 'bg-white text-gray-900 border border-gray-200 rounded-bl-none shadow-sm'
+                      ? 'bg-gradient-to-br from-red-100 to-red-200 text-red-900'
+                      : 'bg-gradient-to-br from-blue-200 to-blue-300 text-gray-900'
                   }`}
                   dangerouslySetInnerHTML={{
                     __html: formatMessage(msg.content)
@@ -168,10 +174,11 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
           })}
 
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-lg rounded-bl-none flex items-center gap-2 shadow-sm">
-                <Loader size={16} className="animate-spin text-green-600" />
-                <span className="text-sm">Processing your request...</span>
+            <div className="flex gap-3 justify-start">
+              <div className="text-3xl pt-1 flex-shrink-0">🤖</div>
+              <div className="bg-gradient-to-br from-blue-200 to-blue-300 text-gray-900 px-6 py-4 rounded-2xl flex items-center gap-3 shadow-md max-w-md">
+                <Loader size={20} className="animate-spin text-blue-600 font-bold" />
+                <span className="text-base font-medium">Thinking...</span>
               </div>
             </div>
           )}
@@ -180,7 +187,7 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-gray-200 bg-white px-6 py-4 rounded-b-lg">
+        <div className="border-t border-gray-200 bg-white px-8 py-5 rounded-b-2xl shadow-inner">
           <div className="flex gap-3">
             <input
               type="text"
@@ -188,13 +195,13 @@ export const GenAIStackChat = ({ isOpen, onClose, workflowId }) => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Send a message"
-              className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition text-sm"
+              className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white focus:border-green-500 transition text-sm font-medium"
               disabled={isLoading}
             />
             <button
               onClick={handleSendMessage}
               disabled={isLoading || !input.trim()}
-              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white p-2 rounded-lg transition flex items-center justify-center"
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-400 text-white p-2 rounded-lg transition flex items-center justify-center shadow-md hover:shadow-lg transform hover:scale-105 disabled:scale-100"
               title="Send message"
             >
               {isLoading ? (

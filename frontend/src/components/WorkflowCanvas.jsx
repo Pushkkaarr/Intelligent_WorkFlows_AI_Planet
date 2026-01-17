@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -17,17 +17,23 @@ const nodeTypes = {
 };
 
 export const WorkflowCanvas = () => {
-  const { nodes, edges, setNodes, setEdges } = useWorkflow();
-  const [nodesState, setNodesState] = useNodesState(nodes);
-  const [edgesState, setEdgesState] = useEdgesState(edges);
+  const { nodes: contextNodes, edges: contextEdges, setNodes: setContextNodes, setEdges: setContextEdges } = useWorkflow();
+  const [nodesState, setNodesState] = useNodesState(contextNodes || []);
+  const [edgesState, setEdgesState] = useEdgesState(contextEdges || []);
 
-  React.useEffect(() => {
-    setNodesState(nodes);
-  }, [nodes, setNodesState]);
+  // Sync context nodes to local state
+  useEffect(() => {
+    if (contextNodes && contextNodes.length > 0) {
+      setNodesState(contextNodes);
+    }
+  }, [contextNodes?.length]);
 
-  React.useEffect(() => {
-    setEdgesState(edges);
-  }, [edges, setEdgesState]);
+  // Sync context edges to local state
+  useEffect(() => {
+    if (contextEdges && contextEdges.length > 0) {
+      setEdgesState(contextEdges);
+    }
+  }, [contextEdges?.length]);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -54,13 +60,16 @@ export const WorkflowCanvas = () => {
           type: 'workflow'
         };
 
-        setNodesState(prev => [...prev, newNode]);
-        setNodes(prev => [...prev, newNode]);
+        setNodesState(prev => {
+          const updated = [...prev, newNode];
+          setContextNodes(updated);
+          return updated;
+        });
       } catch (err) {
         console.error('Error parsing dropped node:', err);
       }
     }
-  }, [setNodes, setNodesState]);
+  }, [setContextNodes]);
 
   const onNodesChange = useCallback((changes) => {
     setNodesState(prev => {
@@ -74,18 +83,18 @@ export const WorkflowCanvas = () => {
         }
         return node;
       }).filter(Boolean);
-      setNodes(updated);
+      setContextNodes(updated);
       return updated;
     });
-  }, [setNodes, setNodesState]);
+  }, [setContextNodes]);
 
   const onEdgesChange = useCallback((changes) => {
     setEdgesState(prev => {
       const updated = prev.filter(edge => !changes.find(c => c.id === edge.id && c.type === 'remove'));
-      setEdges(updated);
+      setContextEdges(updated);
       return updated;
     });
-  }, [setEdges, setEdgesState]);
+  }, [setContextEdges]);
 
   const onConnect = useCallback((connection) => {
     const newEdge = {
@@ -96,9 +105,12 @@ export const WorkflowCanvas = () => {
       markerEnd: { type: MarkerType.ArrowClosed, color: '#059669' },
       type: 'smoothstep'
     };
-    setEdgesState(prev => addEdge(newEdge, prev));
-    setEdges(prev => [...prev, newEdge]);
-  }, [setEdges, setEdgesState]);
+    setEdgesState(prev => {
+      const updated = addEdge(newEdge, prev);
+      setContextEdges(updated);
+      return updated;
+    });
+  }, [setContextEdges]);
 
   return (
     <div 
