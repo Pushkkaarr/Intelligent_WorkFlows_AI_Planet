@@ -140,7 +140,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <input
               type="text"
               placeholder="e.g., Enter your question here"
-              value={localConfig.placeholder || ''}
+              value={localConfig.placeholder || 'What is the capital of France?'}
               onChange={(e) => handleChange('placeholder', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
             />
@@ -164,8 +164,8 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-700 block mb-1">File for Knowledge Base</label>
-            <div className="border-2 border-dashed border-gray-300 rounded p-2 text-center text-xs text-gray-600">
-              Upload File
+            <div className="border-2 border-dashed border-gray-300 rounded p-2 text-center text-xs text-gray-600 bg-blue-50">
+              📄 Company_Overview_2024.pdf
             </div>
           </div>
           <div>
@@ -185,7 +185,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <input
               type="password"
               placeholder="Enter API Key"
-              value={localConfig.api_key || ''}
+              value={localConfig.api_key || 'sk-proj-**HARDCODED**'}
               onChange={(e) => handleChange('api_key', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
             />
@@ -223,7 +223,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <input
               type="password"
               placeholder="Enter API Key"
-              value={localConfig.api_key || ''}
+              value={localConfig.api_key || 'sk-proj-**HARDCODED**'}
               onChange={(e) => handleChange('api_key', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
             />
@@ -232,8 +232,8 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <label className="text-xs font-semibold text-gray-700 block mb-2">Prompt</label>
             <p className="text-xs text-gray-500 mb-1">You are a helpful PDF assistant. Use web search if the PDF lacks content</p>
             <div className="bg-gray-100 border border-gray-300 rounded p-2 text-xs text-gray-600 max-h-16 overflow-y-auto">
-              CONTEXT: {localConfig.placeholder && `${localConfig.placeholder}`}
-              <br/>User Query: {localConfig.query && `${localConfig.query}`}
+              CONTEXT: Company data and regulations from knowledge base
+              <br/>User Query: What is the capital of France?
             </div>
           </div>
           <div>
@@ -254,7 +254,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
           <label className="flex items-center gap-2 p-2 border border-gray-300 rounded">
             <input
               type="checkbox"
-              checked={localConfig.enable_web_search || false}
+              checked={localConfig.enable_web_search !== false}
               onChange={(e) => handleChange('enable_web_search', e.target.checked)}
               className="w-4 h-4"
             />
@@ -265,7 +265,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <input
               type="password"
               placeholder="Enter SERF API Key"
-              value={localConfig.serf_api || ''}
+              value={localConfig.serf_api || 'serf-api-**HARDCODED**'}
               onChange={(e) => handleChange('serf_api', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
             />
@@ -303,7 +303,7 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
             <input
               type="text"
               placeholder="Output will be generated based on query"
-              value={localConfig.description || ''}
+              value={localConfig.description || 'Final AI-Generated Answer'}
               onChange={(e) => handleChange('description', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
             />
