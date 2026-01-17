@@ -6,7 +6,6 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
-  NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useWorkflow } from '../context/WorkflowContext';

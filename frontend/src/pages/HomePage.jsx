@@ -8,7 +8,7 @@ export const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0">
+      <nav className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">Workflow Builder</h1>
           <div className="flex gap-4">
@@ -30,7 +30,7 @@ export const HomePage = () => {
 
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto px-4 py-20 text-center">
-        <h2 className="text-5xl font-bold mb-4">Build Intelligent Workflows Visually</h2>
+        <h2 className="text-5xl font-bold mb-4 text-gray-900">Build Intelligent Workflows Visually</h2>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           Create powerful AI-driven workflows without writing code. Drag and drop components to build intelligent systems.
         </p>

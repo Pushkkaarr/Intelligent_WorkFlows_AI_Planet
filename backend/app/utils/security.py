@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing context - using argon2 with bcrypt as backup (no 72-byte limit)
+pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -17,7 +17,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
 
 
 def hash_password(password: str) -> str:
-    """Hash a password using bcrypt"""
+    """Hash a password using argon2 (no 72-byte limit like bcrypt)"""
     return pwd_context.hash(password)
 
 

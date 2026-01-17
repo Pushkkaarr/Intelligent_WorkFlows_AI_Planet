@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "public", "index.html"],
+  "ext": "jsx,js,css,html",
+  "ignore": ["node_modules", "dist", "build"],
+  "exec": "vite",
+  "delay": 500,
+  "verbose": true
+}
