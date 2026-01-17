@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MessageCircle } from 'lucide-react';
 import { ComponentPanel } from '../components/ComponentPanel';
 import { WorkflowCanvas } from '../components/WorkflowCanvas';
 import { WorkflowControls } from '../components/WorkflowControls';
 import { DocumentUploader } from '../components/DocumentUploader';
 import { WorkflowExecutor } from '../components/WorkflowExecutor';
+import { GenAIStackChat } from '../components/GenAIStackChat';
 import { workflowsAPI } from '../api/endpoints';
 
 export const WorkflowBuilderPage = () => {
@@ -14,6 +15,7 @@ export const WorkflowBuilderPage = () => {
   const [workflow, setWorkflow] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExecutorOpen, setIsExecutorOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -111,6 +113,22 @@ export const WorkflowBuilderPage = () => {
         isOpen={isExecutorOpen}
         onClose={() => setIsExecutorOpen(false)}
       />
+
+      {/* Chat Modal */}
+      <GenAIStackChat
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        workflowId={workflowId}
+      />
+
+      {/* Chat Button */}
+      <button
+        onClick={() => setIsChatOpen(true)}
+        className="fixed bottom-8 right-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-110"
+        title="Open chat"
+      >
+        <MessageCircle size={24} />
+      </button>
 
       {error && (
         <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow">

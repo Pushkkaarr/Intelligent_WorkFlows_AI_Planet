@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import ReactFlow, {
   addEdge,
   MiniMap,
@@ -7,7 +7,6 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   MarkerType,
-  useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useWorkflow } from '../context/WorkflowContext';
@@ -21,8 +20,6 @@ export const WorkflowCanvas = () => {
   const { nodes, edges, setNodes, setEdges } = useWorkflow();
   const [nodesState, setNodesState] = useNodesState(nodes);
   const [edgesState, setEdgesState] = useEdgesState(edges);
-  const reactFlowWrapper = useRef(null);
-  const { project } = useReactFlow();
 
   React.useEffect(() => {
     setNodesState(nodes);
@@ -105,7 +102,6 @@ export const WorkflowCanvas = () => {
 
   return (
     <div 
-      ref={reactFlowWrapper}
       className="flex-1 w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 relative cursor-default" 
       onDragOver={onDragOver} 
       onDrop={onDrop}

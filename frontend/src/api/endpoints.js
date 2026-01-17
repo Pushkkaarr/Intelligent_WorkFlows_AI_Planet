@@ -29,3 +29,9 @@ export const documentsAPI = {
   get: (id) => apiClient.get(`/api/documents/${id}`),
   delete: (id) => apiClient.delete(`/api/documents/${id}`),
 };
+
+// Chat API
+export const chatAPI = {
+  sendMessage: (data) => apiClient.post('/api/chat', data),
+  health: () => apiClient.get('/api/chat/health'),
+};

@@ -6,7 +6,7 @@ import logging
 from dotenv import load_dotenv
 
 # Import routes
-from app.routes import auth, documents, workflows
+from app.routes import auth, documents, workflows, chat
 from app.utils.database import init_db
 from app.middleware.error_handler import ErrorHandlerMiddleware, LoggingMiddleware
 
@@ -56,6 +56,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(documents.router)
 app.include_router(workflows.router)
+app.include_router(chat.router)
 
 
 @app.get("/", tags=["Health"])
