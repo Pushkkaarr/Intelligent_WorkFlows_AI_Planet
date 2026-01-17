@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 from app.utils.database import get_db
 from app.utils.security import create_access_token, decode_token
@@ -41,7 +41,7 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
     }
 
 
-async def get_current_user(credentials: HTTPAuthCredentials = Depends(security), db: Session = Depends(get_db)):
+async def get_current_user(credentials = Depends(security), db: Session = Depends(get_db)):
     """Verify token and return current user"""
     token = credentials.credentials
     payload = decode_token(token)

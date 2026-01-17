@@ -10,7 +10,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
 engine = create_engine(
     DATABASE_URL,
-    echo=os.getenv("DEBUG", False),
+    echo=os.getenv("DEBUG", "false").lower() == "true",
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20
