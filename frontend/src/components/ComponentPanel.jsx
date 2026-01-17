@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useWorkflow } from '../context/WorkflowContext';
-import { Trash2 } from 'lucide-react';
 
 export const ComponentPanel = () => {
   const { addNode } = useWorkflow();
@@ -16,27 +15,49 @@ export const ComponentPanel = () => {
       type: 'user_query',
       label: 'User Query',
       description: 'Entry point for user input',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500 hover:bg-blue-600'
     },
     {
       type: 'knowledge_base',
       label: 'Knowledge Base',
       description: 'Document processing & embeddings',
-      color: 'bg-purple-500'
+      color: 'bg-purple-500 hover:bg-purple-600'
     },
     {
       type: 'llm_engine',
       label: 'LLM Engine',
       description: 'Generate responses with Gemini',
-      color: 'bg-green-500'
+      color: 'bg-green-500 hover:bg-green-600'
     },
     {
       type: 'output',
       label: 'Output',
       description: 'Display final response',
-      color: 'bg-yellow-500'
+      color: 'bg-yellow-500 hover:bg-yellow-600'
     }
   ];
+
+  const getDefaultConfig = (type) => {
+    switch(type) {
+      case 'user_query':
+        return { placeholder: 'Enter your question here' };
+      case 'knowledge_base':
+        return { embedding_model: 'text-embedding-3-large', api_key: '' };
+      case 'llm_engine':
+        return { 
+          model: 'GPT 4o- Mini', 
+          api_key: '', 
+          prompt: 'You are a helpful assistant', 
+          temperature: 0.7,
+          enable_web_search: false,
+          serf_api: ''
+        };
+      case 'output':
+        return { format: 'text', description: 'Output of the result nodes as text' };
+      default:
+        return {};
+    }
+  };
 
   const handleDragStart = (e, component) => {
     const newCount = nodeCount[component.type] + 1;
@@ -47,19 +68,10 @@ export const ComponentPanel = () => {
       data: {
         label: `${component.label} ${newCount}`,
         type: component.type,
-        config: {}
+        config: getDefaultConfig(component.type)
       },
       position: { x: 0, y: 0 },
-      style: {
-        backgroundColor: component.color,
-        border: '2px solid #333',
-        borderRadius: '8px',
-        padding: '16px',
-        textAlign: 'center',
-        color: 'white',
-        fontWeight: 'bold',
-        minWidth: '120px'
-      }
+      type: 'workflow'
     };
 
     e.dataTransfer.effectAllowed = 'move';
@@ -72,18 +84,19 @@ export const ComponentPanel = () => {
   };
 
   return (
-    <div className="w-64 bg-gray-100 border-r border-gray-300 p-4 overflow-y-auto">
-      <h2 className="text-lg font-bold mb-4">Components</h2>
-      <div className="space-y-3">
+    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+      <h2 className="text-lg font-bold mb-4 text-gray-900">Components</h2>
+      <p className="text-xs text-gray-500 mb-4">Drag components to canvas</p>
+      <div className="space-y-2">
         {components.map((comp) => (
           <div
             key={comp.type}
             draggable
             onDragStart={(e) => handleDragStart(e, comp)}
-            className={`${comp.color} text-white p-4 rounded cursor-move hover:opacity-80 transition shadow-md`}
+            className={`${comp.color} text-white p-3 rounded cursor-move transition shadow-sm border border-opacity-20 border-white`}
           >
-            <div className="font-semibold">{comp.label}</div>
-            <div className="text-xs mt-1">{comp.description}</div>
+            <div className="font-semibold text-sm">{comp.label}</div>
+            <div className="text-xs mt-1 opacity-90">{comp.description}</div>
           </div>
         ))}
       </div>

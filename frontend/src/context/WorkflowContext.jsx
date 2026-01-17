@@ -13,7 +13,7 @@ export const WorkflowProvider = ({ children }) => {
 
   const updateNode = (id, updates) => {
     setNodes(prev => prev.map(node => 
-      node.id === id ? { ...node, ...updates } : node
+      node.id === id ? { ...node, data: updates } : node
     ));
   };
 

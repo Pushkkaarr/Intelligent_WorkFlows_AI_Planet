@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Trash2, Loader } from 'lucide-react';
+import { Upload, Trash2, Loader, FileText } from 'lucide-react';
 import { documentsAPI } from '../api/endpoints';
 
 export const DocumentUploader = ({ onUploadSuccess }) => {
@@ -43,19 +43,20 @@ export const DocumentUploader = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="font-bold mb-4">Documents</h3>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <h3 className="font-bold text-gray-900 mb-4">Documents</h3>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-4 text-sm">
           {error}
         </div>
       )}
 
-      <label className="flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <Upload size={32} className="text-gray-400 mb-2" />
-          <p className="text-sm text-gray-500">Click to upload PDF</p>
+      <label className="flex flex-col items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+        <div className="flex flex-col items-center justify-center py-2">
+          <Upload size={24} className="text-gray-400 mb-2" />
+          <p className="text-sm text-gray-600 font-medium">Click to upload PDF</p>
+          <p className="text-xs text-gray-500">Max 50MB</p>
         </div>
         <input
           type="file"
@@ -67,23 +68,27 @@ export const DocumentUploader = ({ onUploadSuccess }) => {
       </label>
 
       {isLoading && (
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <Loader size={20} className="animate-spin" />
+        <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-600">
+          <Loader size={16} className="animate-spin" />
           <span>Uploading...</span>
         </div>
       )}
 
       {documents.length > 0 && (
         <div className="mt-4 space-y-2">
-          <h4 className="font-semibold text-sm">Uploaded Files:</h4>
+          <h4 className="font-semibold text-sm text-gray-700">Uploaded Files:</h4>
           {documents.map(doc => (
-            <div key={doc.id} className="flex justify-between items-center bg-gray-50 p-2 rounded">
-              <span className="text-sm truncate">{doc.filename}</span>
+            <div key={doc.id} className="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-200 hover:border-gray-300 transition">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <FileText size={14} className="text-blue-600 flex-shrink-0" />
+                <span className="text-sm truncate text-gray-700">{doc.filename}</span>
+              </div>
               <button
                 onClick={() => handleDelete(doc.id)}
-                className="text-red-500 hover:text-red-700"
+                className="text-red-500 hover:text-red-700 flex-shrink-0 ml-2"
+                title="Delete document"
               >
-                <Trash2 size={16} />
+                <Trash2 size={14} />
               </button>
             </div>
           ))}
