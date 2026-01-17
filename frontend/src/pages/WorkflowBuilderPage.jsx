@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { ComponentPanel } from '../components/ComponentPanel';
 import { WorkflowCanvas } from '../components/WorkflowCanvas';
 import { WorkflowControls } from '../components/WorkflowControls';
@@ -9,6 +10,7 @@ import { workflowsAPI } from '../api/endpoints';
 
 export const WorkflowBuilderPage = () => {
   const { workflowId } = useParams();
+  const navigate = useNavigate();
   const [workflow, setWorkflow] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExecutorOpen, setIsExecutorOpen] = useState(false);
@@ -51,21 +53,56 @@ export const WorkflowBuilderPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Left Panel */}
-      <div className="w-80 bg-white border-r border-gray-300 overflow-y-auto p-4 space-y-4">
-        <ComponentPanel />
-        <DocumentUploader />
-        <WorkflowControls
-          workflowId={workflowId}
-          onSave={handleSave}
-          onExecute={handleExecute}
-        />
+    <div className="flex h-screen flex-col bg-gray-50">
+      {/* Header with back button */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+          >
+            <ArrowLeft size={20} />
+            Back
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{workflow?.name || 'New Workflow'}</h1>
+            <p className="text-sm text-gray-500">{workflow?.description}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Canvas */}
-      <div className="flex-1">
-        <WorkflowCanvas />
+      {/* Main workflow builder */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Panel */}
+        <div className="w-80 bg-white border-r border-gray-300 overflow-y-auto p-4 space-y-4 shadow-sm">
+          <ComponentPanel />
+          <DocumentUploader />
+          <WorkflowControls
+            workflowId={workflowId}
+            onSave={handleSave}
+            onExecute={handleExecute}
+          />
+        </div>
+
+        {/* Canvas */}
+        <div className="flex-1 overflow-hidden">
+          <WorkflowCanvas />
+        </div>
+
+        {/* Right Panel - Properties */}
+        <div className="w-64 bg-white border-l border-gray-300 p-4 overflow-y-auto shadow-sm">
+          <h3 className="font-bold text-lg mb-4">Properties</h3>
+          <div className="space-y-3 text-sm">
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">Workflow ID</label>
+              <p className="text-gray-500 break-all text-xs">{workflowId}</p>
+            </div>
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">Status</label>
+              <p className="text-green-600 font-medium">Active</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Executor Modal */}

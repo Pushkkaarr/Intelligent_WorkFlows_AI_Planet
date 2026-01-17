@@ -33,41 +33,54 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
   };
 
   return (
-    <div className={`rounded-lg p-3 min-w-56 shadow-lg border-2 bg-white ${getNodeColor(data.type)} transition hover:shadow-xl`}>
-      {/* Top Handle (Input) */}
-      <Handle 
-        type="target" 
-        position={Position.Top}
-        isConnectable={isConnectable}
-        style={{ background: '#059669' }}
-      />
+    <div className={`rounded-lg p-3 min-w-64 shadow-lg border-2 bg-white ${getNodeColor(data.type)} transition hover:shadow-xl relative`}>
+      {/* Top Handle (Input) - Only for non-user_query nodes */}
+      {data.type !== 'user_query' && (
+        <>
+          <Handle 
+            type="target" 
+            position={Position.Top}
+            isConnectable={isConnectable}
+            style={{ 
+              background: '#059669',
+              width: '14px',
+              height: '14px',
+              border: '3px solid white',
+              boxShadow: '0 0 0 2px #059669, 0 0 8px rgba(5, 150, 105, 0.6)',
+              cursor: 'crosshair',
+              pointerEvents: 'auto'
+            }}
+          />
+          <div className="text-xs text-center text-green-600 mb-2 font-bold">Input</div>
+        </>
+      )}
       
       <div className="flex justify-between items-start gap-2 mb-2">
         <div className="flex-1">
           <div className={`font-bold text-sm ${getNodeTextColor(data.type)}`}>{data.label}</div>
-          <div className="text-xs text-gray-600">{data.type.replace(/_/g, ' ')}</div>
+          <div className="text-xs text-gray-500 font-medium">{data.type.replace(/_/g, ' ').toUpperCase()}</div>
         </div>
-        <div className="flex gap-1 flex-shrink-0">
+        <div className="flex gap-1 flex-shrink-0 pointer-events-auto">
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="text-gray-500 hover:text-gray-700 transition p-1"
+            className="text-gray-500 hover:text-gray-700 transition p-1 hover:bg-gray-200 rounded"
             title="Configure settings"
           >
-            <Settings size={14} />
+            <Settings size={16} />
           </button>
           <button
             onClick={() => removeNode(id)}
-            className="text-red-500 hover:text-red-700 transition p-1"
+            className="text-red-500 hover:text-red-700 transition p-1 hover:bg-red-100 rounded"
             title="Delete node"
           >
-            <Trash2 size={14} />
+            <Trash2 size={16} />
           </button>
         </div>
       </div>
 
       {/* Settings Panel */}
       {showSettings && (
-        <div className="bg-gray-50 p-2 mt-2 rounded border border-gray-300 text-xs space-y-2">
+        <div className="bg-gray-50 p-3 mt-3 rounded border border-gray-300 text-xs space-y-2 max-h-72 overflow-y-auto pointer-events-auto">
           <NodeSettings 
             type={data.type} 
             config={data.config || {}}
@@ -76,18 +89,31 @@ export const WorkflowNode = ({ data, id, isConnectable }) => {
         </div>
       )}
 
-      {/* Bottom Handle (Output) */}
-      <Handle 
-        type="source" 
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        style={{ background: '#059669' }}
-      />
+      {/* Bottom Handle (Output) - Only for non-output nodes */}
+      {data.type !== 'output' && (
+        <>
+          <div className="text-xs text-center text-green-600 mt-3 mb-2 font-bold">Output</div>
+          <Handle 
+            type="source" 
+            position={Position.Bottom}
+            isConnectable={isConnectable}
+            style={{ 
+              background: '#059669',
+              width: '14px',
+              height: '14px',
+              border: '3px solid white',
+              boxShadow: '0 0 0 2px #059669, 0 0 8px rgba(5, 150, 105, 0.6)',
+              cursor: 'crosshair',
+              pointerEvents: 'auto'
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
 
-const NodeSettings = ({ type, config, onChange }) => {
+  const NodeSettings = ({ type, config, onChange }) => {
   const [localConfig, setLocalConfig] = useState(config);
 
   const handleSave = () => {
@@ -104,150 +130,195 @@ const NodeSettings = ({ type, config, onChange }) => {
   switch(type) {
     case 'user_query':
       return (
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-semibold">User Query Settings</label>
-          <input
-            type="text"
-            placeholder="Query placeholder"
-            value={localConfig.placeholder || ''}
-            onChange={(e) => handleChange('placeholder', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          />
+        <div className="space-y-3">
+          <div>
+            <label className="block text-gray-800 font-bold text-xs mb-2">User Query Settings</label>
+            <p className="text-xs text-gray-600 mb-2">Enter point for queries</p>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Query Placeholder</label>
+            <input
+              type="text"
+              placeholder="e.g., Enter your question here"
+              value={localConfig.placeholder || ''}
+              onChange={(e) => handleChange('placeholder', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            />
+            <p className="text-xs text-gray-500 mt-1">This text appears as placeholder in query input</p>
+          </div>
           <button
             onClick={handleSave}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded text-xs font-bold"
           >
-            Save
+            Save Settings
           </button>
         </div>
       );
 
     case 'knowledge_base':
       return (
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-semibold">Knowledge Base</label>
-          <select
-            value={localConfig.embedding_model || 'text-embedding-3-large'}
-            onChange={(e) => handleChange('embedding_model', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          >
-            <option value="text-embedding-3-large">text-embedding-3-large</option>
-            <option value="text-embedding-3-small">text-embedding-3-small</option>
-            <option value="all-MiniLM-L6-v2">all-MiniLM-L6-v2</option>
-          </select>
-          <label className="block text-gray-700 font-semibold mt-2">API Key</label>
-          <input
-            type="password"
-            placeholder="API Key"
-            value={localConfig.api_key || ''}
-            onChange={(e) => handleChange('api_key', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          />
+        <div className="space-y-3">
+          <div>
+            <label className="block text-gray-800 font-bold text-xs mb-2">Knowledge Base</label>
+            <p className="text-xs text-gray-600 mb-2">Let LLM search info in your file</p>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">File for Knowledge Base</label>
+            <div className="border-2 border-dashed border-gray-300 rounded p-2 text-center text-xs text-gray-600">
+              Upload File
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Embedding Model</label>
+            <select
+              value={localConfig.embedding_model || 'text-embedding-3-large'}
+              onChange={(e) => handleChange('embedding_model', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            >
+              <option value="text-embedding-3-large">text-embedding-3-large</option>
+              <option value="text-embedding-3-small">text-embedding-3-small</option>
+              <option value="all-MiniLM-L6-v2">all-MiniLM-L6-v2</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">API Key</label>
+            <input
+              type="password"
+              placeholder="Enter API Key"
+              value={localConfig.api_key || ''}
+              onChange={(e) => handleChange('api_key', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            />
+          </div>
           <button
             onClick={handleSave}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded text-xs font-bold"
           >
-            Save
+            Save Settings
           </button>
         </div>
       );
 
     case 'llm_engine':
       return (
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-semibold">LLM Settings</label>
-          <select
-            value={localConfig.model || 'GPT 4o- Mini'}
-            onChange={(e) => handleChange('model', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          >
-            <option value="GPT 4o- Mini">GPT 4o- Mini</option>
-            <option value="GPT 4">GPT 4</option>
-            <option value="gemini-pro">Gemini Pro</option>
-          </select>
-          <label className="block text-gray-700 font-semibold mt-2">API Key</label>
-          <input
-            type="password"
-            placeholder="API Key"
-            value={localConfig.api_key || ''}
-            onChange={(e) => handleChange('api_key', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          />
-          <label className="block text-gray-700 font-semibold mt-2">Prompt</label>
-          <textarea
-            placeholder="Custom prompt"
-            value={localConfig.prompt || ''}
-            onChange={(e) => handleChange('prompt', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs h-16 resize-none"
-          />
-          <label className="flex items-center gap-2 mt-2">
+        <div className="space-y-3">
+          <div>
+            <label className="block text-gray-800 font-bold text-xs mb-2">LLM (OpenAI)</label>
+            <p className="text-xs text-gray-600 mb-2">Run a query with OpenAI LLM</p>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Model</label>
+            <select
+              value={localConfig.model || 'GPT 4o- Mini'}
+              onChange={(e) => handleChange('model', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            >
+              <option value="GPT 4o- Mini">GPT 4o- Mini</option>
+              <option value="GPT 4">GPT 4</option>
+              <option value="gemini-pro">Gemini Pro</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">API Key</label>
+            <input
+              type="password"
+              placeholder="Enter API Key"
+              value={localConfig.api_key || ''}
+              onChange={(e) => handleChange('api_key', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-2">Prompt</label>
+            <p className="text-xs text-gray-500 mb-1">You are a helpful PDF assistant. Use web search if the PDF lacks content</p>
+            <div className="bg-gray-100 border border-gray-300 rounded p-2 text-xs text-gray-600 max-h-16 overflow-y-auto">
+              CONTEXT: {localConfig.placeholder && `${localConfig.placeholder}`}
+              <br/>User Query: {localConfig.query && `${localConfig.query}`}
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Temperature</label>
+            <div className="flex gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={localConfig.temperature || 0.7}
+                onChange={(e) => handleChange('temperature', parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs font-bold text-gray-700 w-8">{(localConfig.temperature || 0.7).toFixed(1)}</span>
+            </div>
+          </div>
+          <label className="flex items-center gap-2 p-2 border border-gray-300 rounded">
             <input
               type="checkbox"
               checked={localConfig.enable_web_search || false}
               onChange={(e) => handleChange('enable_web_search', e.target.checked)}
               className="w-4 h-4"
             />
-            <span>Enable Web Search</span>
+            <span className="text-xs font-semibold text-gray-700">WebSearch Tool</span>
           </label>
-          <label className="block text-gray-700 font-semibold mt-2">Temperature</label>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={localConfig.temperature || 0.7}
-            onChange={(e) => handleChange('temperature', parseFloat(e.target.value))}
-            className="w-full"
-          />
-          <span className="text-xs text-gray-600">{localConfig.temperature || 0.7}</span>
-          <label className="block text-gray-700 font-semibold mt-2">SERF API</label>
-          <input
-            type="password"
-            placeholder="SERF API Key"
-            value={localConfig.serf_api || ''}
-            onChange={(e) => handleChange('serf_api', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          />
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">SERF API</label>
+            <input
+              type="password"
+              placeholder="Enter SERF API Key"
+              value={localConfig.serf_api || ''}
+              onChange={(e) => handleChange('serf_api', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            />
+          </div>
           <button
             onClick={handleSave}
-            className="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs mt-2"
+            className="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded text-xs font-bold"
           >
-            Save
+            Save Settings
           </button>
         </div>
       );
 
     case 'output':
       return (
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-semibold">Output Settings</label>
-          <select
-            value={localConfig.format || 'text'}
-            onChange={(e) => handleChange('format', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          >
-            <option value="text">Text</option>
-            <option value="json">JSON</option>
-            <option value="markdown">Markdown</option>
-          </select>
-          <label className="block text-gray-700 font-semibold mt-2">Description</label>
-          <input
-            type="text"
-            placeholder="Output description"
-            value={localConfig.description || ''}
-            onChange={(e) => handleChange('description', e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-          />
+        <div className="space-y-3">
+          <div>
+            <label className="block text-gray-800 font-bold text-xs mb-2">Output</label>
+            <p className="text-xs text-gray-600 mb-2">Output of the result nodes as text</p>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Format</label>
+            <select
+              value={localConfig.format || 'text'}
+              onChange={(e) => handleChange('format', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            >
+              <option value="text">Text</option>
+              <option value="json">JSON</option>
+              <option value="markdown">Markdown</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-1">Description</label>
+            <input
+              type="text"
+              placeholder="Output will be generated based on query"
+              value={localConfig.description || ''}
+              onChange={(e) => handleChange('description', e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+            />
+          </div>
           <button
             onClick={handleSave}
-            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs"
+            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-2 rounded text-xs font-bold"
           >
-            Save
+            Save Settings
           </button>
         </div>
       );
 
     default:
-      return <p className="text-gray-600">No settings available</p>;
+      return <p className="text-gray-600 text-xs">No settings available</p>;
   }
 };
+
