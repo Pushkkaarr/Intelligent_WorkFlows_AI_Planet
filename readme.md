@@ -2,7 +2,7 @@
 
 A **full-stack No-Code / Low-Code platform** that lets users visually design, configure, and chat with **intelligent AI workflows** using a drag-and-drop interface.
 
-Users can connect modular components to build custom pipelines for **document understanding, vector search, web search, and LLM-powered conversations**—all without writing code.
+Users can connect modular components to build custom pipelines for **document understanding, vector search, web search, and LLM-powered conversations** all without writing code.
 
 ---
 
