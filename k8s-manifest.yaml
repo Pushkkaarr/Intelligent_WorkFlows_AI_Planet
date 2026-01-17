@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-config
+  namespace: default
+data:
+  DATABASE_URL: "postgresql://workflow_user:workflow_password@postgres:5432/workflow_db"
+  FRONTEND_URL: "http://workflow-frontend:3000"
+  DEBUG: "False"
+  HOST: "0.0.0.0"
+  PORT: "8000"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: workflow-secrets
+  namespace: default
+type: Opaque
+stringData:
+  GEMINI_API_KEY: "your_gemini_api_key_here"
+  SERPAPI_API_KEY: "your_serpapi_api_key_here"
+  SECRET_KEY: "your_secret_key_here_change_in_production"
+  DB_PASSWORD: "workflow_password"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/postgres
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_USER
+          value: workflow_user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: workflow-secrets
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          value: workflow_db
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: default
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-backend
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: workflow-backend
+  template:
+    metadata:
+      labels:
+        app: workflow-backend
+    spec:
+      containers:
+      - name: backend
+        image: workflow-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: workflow-config
+        - secretRef:
+            name: workflow-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workflow-backend
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: workflow-backend
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-frontend
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: workflow-frontend
+  template:
+    metadata:
+      labels:
+        app: workflow-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: workflow-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+        env:
+        - name: VITE_API_URL
+          value: "http://workflow-backend:8000"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workflow-frontend
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: workflow-frontend
