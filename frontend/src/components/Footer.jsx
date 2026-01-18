@@ -56,7 +56,7 @@ export const Footer = () => {
 
         <div className="border-t border-background/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-background/60 text-sm">
-            © 2024 GenAI Stack. All rights reserved.
+            © 2026 GenAI Stack. All rights reserved.
           </p>
           <p className="text-background/60 text-sm">
             Made with ♥ for developers everywhere

@@ -15,25 +15,29 @@ export const ComponentPanel = () => {
       type: 'user_query',
       label: 'User Query',
       description: 'Entry point for user input',
-      color: 'bg-blue-500 hover:bg-blue-600'
+      color: 'bg-blue-500 hover:bg-blue-600',
+      nodeColor: 'bg-blue-50 border-blue-400'
     },
     {
       type: 'knowledge_base',
       label: 'Knowledge Base',
       description: 'Document processing & embeddings',
-      color: 'bg-purple-500 hover:bg-purple-600'
+      color: 'bg-purple-500 hover:bg-purple-600',
+      nodeColor: 'bg-purple-50 border-purple-400'
     },
     {
       type: 'llm_engine',
       label: 'LLM Engine',
       description: 'Generate responses with Gemini',
-      color: 'bg-green-500 hover:bg-green-600'
+      color: 'bg-cyan-500 hover:bg-cyan-600',
+      nodeColor: 'bg-cyan-50 border-cyan-400'
     },
     {
       type: 'output',
       label: 'Output',
       description: 'Display final response',
-      color: 'bg-yellow-500 hover:bg-yellow-600'
+      color: 'bg-orange-500 hover:bg-orange-600',
+      nodeColor: 'bg-orange-50 border-orange-400'
     }
   ];
 
@@ -68,6 +72,7 @@ export const ComponentPanel = () => {
       data: {
         label: `${component.label} ${newCount}`,
         type: component.type,
+        nodeColor: component.nodeColor,
         config: getDefaultConfig(component.type)
       },
       position: { x: 0, y: 0 },
@@ -84,9 +89,9 @@ export const ComponentPanel = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+    <div className="bg-white rounded-lg shadow-sm p-4 border border-green-200">
       <h2 className="text-lg font-bold mb-4 text-gray-900">Components</h2>
-      <p className="text-xs text-gray-500 mb-4">Drag components to canvas</p>
+      <p className="text-xs text-gray-600 mb-4">Drag components to canvas</p>
       <div className="space-y-2">
         {components.map((comp) => (
           <div
