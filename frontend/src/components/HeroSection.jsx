@@ -88,13 +88,13 @@ export const HeroSection = () => {
         </div>
 
         {/* Hero Image */}
-        <div className="animate-fade-up-delay-4 relative max-w-5xl mx-auto">
-          <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-green-200 bg-white p-1">
-            <div className="rounded-xl bg-gradient-to-br from-green-50 to-teal-50 p-8 text-center">
-              <div className="w-full h-96 bg-gradient-to-br from-green-100/50 to-teal-100/50 rounded-lg flex items-center justify-center">
-                <div className="text-6xl font-bold text-green-600">AI Workflow</div>
-              </div>
-            </div>
+        <div className="animate-fade-up-delay-4 relative max-w-4xl mx-auto">
+          <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-green-200 bg-white">
+            <img 
+              src="https://xcelacore.com/wp-content/uploads/2022/04/robotic-process-automation.jpg" 
+              alt="AI Workflow Automation" 
+              className="w-full h-auto max-h-[400px] object-cover rounded-2xl"
+            />
           </div>
           {/* Decorative Elements */}
           <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl opacity-20 blur-xl" />

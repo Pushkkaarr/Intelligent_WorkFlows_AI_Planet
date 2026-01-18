@@ -15,12 +15,12 @@ export const ShowcaseSection = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image */}
           <div className="relative order-2 lg:order-1">
-            <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-border bg-gradient-card p-1">
-              <div className="rounded-xl bg-background p-8">
-                <div className="w-full h-80 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center">
-                  <div className="text-5xl font-bold gradient-text">Dashboard</div>
-                </div>
-              </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-green-200 bg-white">
+              <img 
+                src="https://www.finereport.com/en/wp-content/uploads/2021/07/marketing.png" 
+                alt="Dashboard Analytics" 
+                className="w-full h-auto object-cover rounded-2xl"
+              />
             </div>
             {/* Floating Card */}
             <div className="absolute -bottom-6 -right-6 glass p-4 rounded-xl shadow-card hidden md:block animate-float">

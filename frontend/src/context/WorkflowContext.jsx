@@ -38,6 +38,52 @@ export const WorkflowProvider = ({ children }) => {
     setCurrentWorkflow(null);
   };
 
+  // Get response from backend API
+  const generateResponse = async (userQuery) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+      const workflowId = currentWorkflow?.id || 'default';
+
+      const response = await fetch(`${backendUrl}/api/workflows/${workflowId}/execute`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          query: userQuery
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to generate response from backend');
+      }
+
+      const data = await response.json();
+      
+      if (data.response) {
+        return data.response;
+      }
+      
+      throw new Error('Invalid response format from backend');
+    } catch (error) {
+      console.error('Error calling backend API:', error);
+      throw error;
+    }
+  };
+
+  // Execute workflow with backend response
+  const executeWorkflow = async (query) => {
+    try {
+      const response = await generateResponse(query);
+      return response;
+    } catch (error) {
+      console.error('Workflow execution error:', error);
+      throw error;
+    }
+  };
+
   const value = {
     nodes,
     edges,
@@ -50,7 +96,9 @@ export const WorkflowProvider = ({ children }) => {
     removeEdge,
     clearWorkflow,
     setNodes,
-    setEdges
+    setEdges,
+    generateResponse,
+    executeWorkflow
   };
 
   return (

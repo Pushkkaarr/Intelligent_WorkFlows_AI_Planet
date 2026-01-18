@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ComponentPanel } from '../components/ComponentPanel';
 import { WorkflowCanvas } from '../components/WorkflowCanvas';
 import { WorkflowControls } from '../components/WorkflowControls';
@@ -17,6 +17,7 @@ export const WorkflowBuilderPage = () => {
   const [isExecutorOpen, setIsExecutorOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     if (workflowId) {
@@ -55,36 +56,53 @@ export const WorkflowBuilderPage = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col bg-green-50">
       {/* Header with back button */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <div className="bg-white border-b border-green-200 px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+            className="flex items-center gap-2 text-green-600 hover:text-green-700 transition font-medium"
           >
             <ArrowLeft size={20} />
             Back
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{workflow?.name || 'New Workflow'}</h1>
-            <p className="text-sm text-gray-500">{workflow?.description}</p>
+            <p className="text-sm text-gray-600">{workflow?.description}</p>
           </div>
         </div>
       </div>
 
       {/* Main workflow builder */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Panel */}
-        <div className="w-80 bg-white border-r border-gray-300 overflow-y-auto p-4 space-y-4 shadow-sm">
-          <ComponentPanel />
-          <DocumentUploader />
-          <WorkflowControls
-            workflowId={workflowId}
-            onSave={handleSave}
-            onExecute={handleExecute}
-          />
+        {/* Left Panel - Collapsible */}
+        <div className={`bg-white border-r border-green-200 overflow-y-auto shadow-sm transition-all duration-300 ${isSidebarOpen ? 'w-80 p-4' : 'w-0'}`}>
+          {isSidebarOpen && (
+            <div className="space-y-4">
+              <ComponentPanel />
+              <DocumentUploader />
+              <WorkflowControls
+                workflowId={workflowId}
+                onSave={handleSave}
+                onExecute={handleExecute}
+              />
+            </div>
+          )}
         </div>
+
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="w-8 bg-white border-r border-green-200 flex items-center justify-center hover:bg-green-50 transition group"
+          title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          {isSidebarOpen ? (
+            <ChevronLeft size={20} className="text-green-600 group-hover:text-green-700" />
+          ) : (
+            <ChevronRight size={20} className="text-green-600 group-hover:text-green-700" />
+          )}
+        </button>
 
         {/* Canvas */}
         <div className="flex-1 overflow-hidden">
@@ -92,15 +110,15 @@ export const WorkflowBuilderPage = () => {
         </div>
 
         {/* Right Panel - Properties */}
-        <div className="w-64 bg-white border-l border-gray-300 p-4 overflow-y-auto shadow-sm">
-          <h3 className="font-bold text-lg mb-4">Properties</h3>
+        <div className="w-64 bg-white border-l border-green-200 p-4 overflow-y-auto shadow-sm">
+          <h3 className="font-bold text-lg mb-4 text-gray-900">Properties</h3>
           <div className="space-y-3 text-sm">
             <div>
-              <label className="block text-gray-600 font-medium mb-1">Workflow ID</label>
-              <p className="text-gray-500 break-all text-xs">{workflowId}</p>
+              <label className="block text-green-700 font-medium mb-1">Workflow ID</label>
+              <p className="text-gray-600 break-all text-xs">{workflowId}</p>
             </div>
             <div>
-              <label className="block text-gray-600 font-medium mb-1">Status</label>
+              <label className="block text-green-700 font-medium mb-1">Status</label>
               <p className="text-green-600 font-medium">Active</p>
             </div>
           </div>
