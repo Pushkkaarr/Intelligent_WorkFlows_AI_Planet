@@ -52,3 +52,103 @@ Enable anyone to **build, test, and interact with AI workflows visually**, makin
 
 ---
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Python 3.9+** (for backend)
+- **Node.js 16+** (for frontend)
+- **Docker** (optional, for containerized deployment)
+- **PostgreSQL** (database)
+- **API Keys:** OpenAI or Gemini, SerpAPI or Brave Search (optional)
+
+---
+
+### ⚙️ Backend Setup
+
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
+
+2. **Create and activate virtual environment:**
+   ```bash
+   python -m venv myenv
+   myenv\Scripts\activate  # On Windows
+   # source myenv/bin/activate  # On macOS/Linux
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment variables:**
+   Create a `.env` file in the `backend` directory with the following:
+   ```
+   DATABASE_URL=postgresql://user:password@localhost:5432/workflow_db
+   OPENAI_API_KEY=your_openai_key_here
+   GEMINI_API_KEY=your_gemini_key_here
+   SERPAPI_KEY=your_serpapi_key_here
+   SECRET_KEY=your_secret_key_here
+   ```
+
+5. **Run the backend server:**
+   ```bash
+   python app/main.py
+
+   or
+   uvicorn app.main:app --reload --host 127.0.0.1 --port 8070
+   ```
+   The backend will start on `http://localhost:8070`
+
+---
+
+### 🎨 Frontend Setup
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure API endpoint:**
+   Update `src/api/client.js` with your backend URL (default is `http://localhost:8070`)
+
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   The frontend will start on `http://localhost:3000`
+
+---
+
+### 🐳 Docker Deployment
+
+To run both frontend and backend using Docker:
+
+```bash
+docker-compose up -d
+```
+
+This will:
+- Start the FastAPI backend on `http://localhost:8000`
+- Start the React frontend on `http://localhost:3000`
+- Start PostgreSQL database on `localhost:5432`
+
+---
+
+### ✅ Quick Test
+
+1. Open frontend: `http://localhost:3000`
+2. Register a new account or log in
+3. Create a new workflow using the visual builder
+4. Upload documents to your knowledge base
+5. Chat with your workflow to test the AI pipeline
+
+---
+
