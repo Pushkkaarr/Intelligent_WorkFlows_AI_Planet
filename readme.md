@@ -86,18 +86,39 @@ Enable anyone to **build, test, and interact with AI workflows visually**, makin
 4. **Configure environment variables:**
    Create a `.env` file in the `backend` directory with the following:
    ```
-   DATABASE_URL=postgresql://user:password@localhost:5432/workflow_db
-   OPENAI_API_KEY=your_openai_key_here
-   GEMINI_API_KEY=your_gemini_key_here
-   SERPAPI_KEY=your_serpapi_key_here
-   SECRET_KEY=your_secret_key_here
+   # Database Configuration
+   DATABASE_URL=postgresql:/<yourcredentials>/workflow_db
+
+   # API Keys
+   GEMINI_API_KEY=your-gemini-key
+   SERPAPI_API_KEY=your-serp-key
+
+   # JWT Configuration
+   SECRET_KEY=your_secret_key_here_change_in_production
+   ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+   # Vector Store Configuration
+   CHROMA_PATH=./chroma_db
+
+   # Server Configuration
+   DEBUG=True
+   HOST=127.0.0.0
+   PORT=8070
+
+   # CORS Configuration
+   FRONTEND_URL=http://localhost:3000
+
+   # Embedding Model
+   EMBEDDING_MODEL=all-MiniLM-L6-v2
    ```
 
 5. **Run the backend server:**
    ```bash
    python app/main.py
-
-   or
+   ```
+   Or alternatively:
+   ```bash
    uvicorn app.main:app --reload --host 127.0.0.1 --port 8070
    ```
    The backend will start on `http://localhost:8070`
@@ -136,7 +157,7 @@ docker-compose up -d
 ```
 
 This will:
-- Start the FastAPI backend on `http://localhost:8000`
+- Start the FastAPI backend on `http://localhost:8070`
 - Start the React frontend on `http://localhost:3000`
 - Start PostgreSQL database on `localhost:5432`
 
